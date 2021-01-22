@@ -1,5 +1,5 @@
 name: BombingEyes
-version: ${project.version}
+version: 1.0-SNAPSHOT
 main: net.kunmc.lab.bombingeyes.BombingEyes
 api-version: 1.15
 

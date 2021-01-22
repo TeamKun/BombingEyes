@@ -1,0 +1,13 @@
+tick: 10 #処理のスパン(単位:tick)
+
+fov: 70 #FOV(単位:度)
+aspectRatioWide: 16 #アスペクト比 (横)
+aspectRatioHeight: 9 #アスペクト比 (縦)
+nearClip: 5 #ニアクリップまでの距離
+farClip: 50 #ファークリップまでの距離
+
+power: 4 #爆発の威力
+isSetFire: false #爆発時の着火の有無
+isBreakBlock: false #爆発時のブロック破壊の有無
+
+timeLimit: 200 #視界外爆破モードのタイムリミット
