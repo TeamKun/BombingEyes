@@ -4,10 +4,14 @@ import net.kunmc.lab.bombingeyes.BombingEyes;
 import net.kunmc.lab.bombingeyes.Config;
 import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class InMode extends CommonProcess {
@@ -33,18 +37,20 @@ public class InMode extends CommonProcess {
             @Override
             public void run() {
                 // 視界内判定
-                for (Player player : playerList) {
-                    if (isInSight(player)) {
-                        // 視界内のプレイヤーを爆殺
-                        bombing(player);
+                for (Player killer : ModeController.killerList) {
+                    for (Player target : playerList) {
+                        if (isInSight(killer,target)) {
+                            // 視界内のプレイヤーを爆殺
+                            bombing(target);
+                        }
                     }
                 }
 
-                // モード切替時
-                if (!(ModeController.runningMode == Const.MODE_BE_IN)) {
+                // モードが切り替わったとき
+                if (!ModeController.runningMode.equals(Const.MODE_BE_IN)) {
                     // プロセス終了
-                    playerList.clear();
                     cancel();
+                    playerList.clear();
                     return;
                 }
             }
@@ -58,7 +64,7 @@ public class InMode extends CommonProcess {
     void settingPlayerList() {
         // キラー以外のプレイヤーをリストに格納
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player != ModeController.killer) {
+            if (!ModeController.killerList.contains(player)) {
                 playerList.add(player);
             }
         }
@@ -70,7 +76,7 @@ public class InMode extends CommonProcess {
      */
     void addPlayer(Player player) {
         for (Player p : playerList) {
-            if (!p.getPlayer().equals(player) && !p.equals(ModeController.killer)) {
+            if (!p.getPlayer().equals(player) && !ModeController.killerList.contains(p)) {
                 playerList.add(player);
             }
         }

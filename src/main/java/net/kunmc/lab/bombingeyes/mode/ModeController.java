@@ -4,12 +4,15 @@ import net.kunmc.lab.bombingeyes.Config;
 import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ModeController {
     /**　実行中のモード */
     static String runningMode = Const.MODE_NEUTRAL;
 
     /** キラープレイヤー */
-    static Player killer;
+    static List<Player> killerList = new ArrayList<Player>();
 
     /** 視錐台オブジェクト */
     static Frustum frustum;
@@ -19,20 +22,21 @@ public class ModeController {
         // モードを設定
         ModeController.runningMode = runningMode;
 
+
         switch (runningMode) {
-            case Const.COMMAND_BE_IN:
+            case Const.MODE_BE_IN:
                 InMode inMode = InMode.getInstance();
                 inMode.settingPlayerList();
                 inMode.process();
                 break;
-            case Const.COMMAND_BE_OUT:
+            case Const.MODE_BE_OUT:
                 OutMode outMode = OutMode.getInstance();
                 outMode.settingPlayerList();
                 outMode.process();
                 break;
-            case Const.COMMAND_BE_OFF:
+            case Const.MODE_NEUTRAL:
                 // キラープレイヤーの設定を消去
-                killer = null;
+                killerList.clear();
                 frustum = null;
                 break;
         }
@@ -43,7 +47,11 @@ public class ModeController {
      * @param killer
      */
     public static void setKiller(Player killer) {
-        ModeController.killer = killer;
+        killerList.add(killer);
+    }
+
+    public static void initializeKiller() {
+        killerList.clear();
     }
 
     public static String getRunningMode() {

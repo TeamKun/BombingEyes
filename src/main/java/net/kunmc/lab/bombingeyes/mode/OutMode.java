@@ -5,12 +5,15 @@ import net.kunmc.lab.bombingeyes.BombingEyes;
 import net.kunmc.lab.bombingeyes.Config;
 import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +22,8 @@ public class OutMode extends CommonProcess {
     private static OutMode instance;
     private static List<OutModePlayer> playerList = new ArrayList<>();
 
-    private OutMode(){}
+    private OutMode() {
+    }
 
     public static OutMode getInstance() {
         if (instance == null) {
@@ -35,19 +39,20 @@ public class OutMode extends CommonProcess {
         BukkitRunnable process = new BukkitRunnable() {
             @Override
             public void run() {
-                // プレイヤーのタイマーを確認
-                for (OutModePlayer p : playerList) {
-                    if (p.getTime() > Config.timeLimit) {
-                        // プレイヤーの爆破処理
-                        OutMode.super.bombing(p.getPlayer());
-                        // リストから除外
-                        playerList.remove(p);
-                    }
+            // プレイヤーのタイマーを確認
+            for (OutModePlayer p : playerList) {
+                if (p.getTime() > Config.timeLimit) {
+                    // プレイヤーの爆破処理
+                    OutMode.super.bombing(p.getPlayer());
+                    // リストから除外
+                    playerList.remove(p);
                 }
+            }
 
-                // 視界内判定
+            // 視界内判定
+            for (Player killer : ModeController.killerList) {
                 for (OutModePlayer player : playerList) {
-                    if (isInSight(player.getPlayer())) {
+                    if (isInSight(killer, player.getPlayer())) {
                         // 視界内に入ったプレイヤーのタイマーをリセット
                         player.clearTime();
                     } else {
@@ -55,25 +60,27 @@ public class OutMode extends CommonProcess {
                         player.incrementTime();
                     }
                 }
+            }
 
-                if (ModeController.runningMode != Const.MODE_BE_IN) {
-                    // プロセス終了
-                    playerList.clear();
-                    cancel();
-                    return;
-                }
+            // モードが切り替わったとき
+            if (!ModeController.runningMode.equals(Const.MODE_BE_IN)) {
+                // プロセス終了
+                cancel();
+                playerList.clear();
+                return;
+            }
             }
         };
-        process.runTaskTimer(BombingEyes.getPlugin(),0L, Config.tick);
+        process.runTaskTimer(BombingEyes.getPlugin(), 0L, Config.tick);
     }
 
     /**
      * プレイヤーリストをセット
      */
-     void settingPlayerList() {
+    void settingPlayerList() {
         // キラー以外のプレイヤーをリストに格納
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player != ModeController.killer) {
+            if (!ModeController.killerList.contains(player)) {
                 playerList.add(new OutModePlayer(player));
             }
         }
@@ -81,6 +88,7 @@ public class OutMode extends CommonProcess {
 
     /**
      * リストにプレイヤーを追加する
+     *
      * @param player
      */
     void addPlayer(Player player) {
@@ -88,7 +96,7 @@ public class OutMode extends CommonProcess {
             if (p.getPlayer().equals(player)) {
                 playerList.remove(p);
             }
-            if (player.equals(ModeController.killer)) {
+            if (!ModeController.killerList.contains(player)) {
                 playerList.add(new OutModePlayer(player));
             }
         }
@@ -96,6 +104,7 @@ public class OutMode extends CommonProcess {
 
     /**
      * リストからプレイヤーを削除する
+     *
      * @param player
      */
     void removePlayer(Player player) {

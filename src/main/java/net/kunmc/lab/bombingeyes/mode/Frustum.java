@@ -46,7 +46,7 @@ public class Frustum {
         this.right_top_far    = new Vector( far_x,  far_y, FAR_PLANE);
     }
 
-    Frustum(Vector left_bottom_near,
+    private Frustum(Vector left_bottom_near,
             Vector right_bottom_near,
             Vector left_top_near,
             Vector right_top_near,
@@ -123,14 +123,14 @@ public class Frustum {
         matrix[2][1] = sinY;
         matrix[2][2] = cosY;
 
-        return new Frustum(calcMatrix(matrix,left_bottom_near),
-                calcMatrix(matrix,right_bottom_near),
-                calcMatrix(matrix,left_top_near),
-                calcMatrix(matrix,right_top_near),
-                calcMatrix(matrix,left_bottom_far),
-                calcMatrix(matrix,right_bottom_far),
-                calcMatrix(matrix,left_top_far),
-                calcMatrix(matrix,right_top_far));
+        return new Frustum(calcMatrix(matrix,this.left_bottom_near),
+                calcMatrix(matrix,this.right_bottom_near),
+                calcMatrix(matrix,this.left_top_near),
+                calcMatrix(matrix,this.right_top_near),
+                calcMatrix(matrix,this.left_bottom_far),
+                calcMatrix(matrix,this.right_bottom_far),
+                calcMatrix(matrix,this.left_top_far),
+                calcMatrix(matrix,this.right_top_far));
     }
 
     /**
@@ -159,6 +159,11 @@ public class Frustum {
                 m[2][0] * x + m[2][1] * y + m[2][2] * z);
     }
 
+    /**
+     * ターゲットがこの視錐台内に含まれるか判定する
+     * @param target
+     * @return true:視錐台内 false: 視錐台外
+     */
     public boolean isInSight(Vector target) {
 
         // 右面の判定
@@ -190,6 +195,14 @@ public class Frustum {
 
     }
 
+    /**
+     * 法線ベクトルを算出する
+     * @param a
+     * @param b
+     * @param c
+     * @param target
+     * @return 法線ベクトル
+     */
     private double calcDot(Vector a, Vector b, Vector c, Vector target) {
         Vector newA = a.clone();
         Vector newB = b.clone();

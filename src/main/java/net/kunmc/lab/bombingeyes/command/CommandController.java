@@ -11,6 +11,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandController implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -65,9 +68,11 @@ public class CommandController implements CommandExecutor {
 
 
         // 指定されたプレイヤーの存在チェック
-        if (Bukkit.selectEntities(sender,args[0]).isEmpty()) {
-            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
-            return;
+        for (String arg : args) {
+            if (Bukkit.selectEntities(sender,arg).isEmpty()) {
+                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
+                return;
+            }
         }
 
         if (ModeController.getRunningMode().equals(Const.MODE_BE_IN)) {
@@ -75,18 +80,24 @@ public class CommandController implements CommandExecutor {
             return;
         }
 
-        // キラープレイヤーオブジェクトの取得
-        Player killer = (Player) Bukkit.selectEntities(sender,args[0]).get(0);
-
         // キラープレイヤーのセット
-        ModeController.setKiller(killer);
+        ModeController.initializeKiller();
+        for (String arg : args) {
+            ModeController.setKiller((Player) Bukkit.selectEntities(sender,arg).get(0));
+        }
+
         // 視錐台オブジェクトをセット
         ModeController.createFrustum();
         // モードの設定をして実行
         ModeController.controller(Const.MODE_BE_IN);
 
+        Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
         Bukkit.broadcastMessage(DecolationConst.RED + "視界内爆破モードを開始しました");
-        Bukkit.broadcastMessage(DecolationConst.RED + killer.getName() + "の視界に入らないでください");
+        for (String arg : args) {
+            Bukkit.broadcastMessage(DecolationConst.RED + arg);
+        }
+        Bukkit.broadcastMessage(DecolationConst.RED + "の視界に入らないでください");
+        Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
     }
 
     /**
@@ -102,9 +113,11 @@ public class CommandController implements CommandExecutor {
         }
 
         // 指定されたプレイヤーの存在チェック
-        if (Bukkit.selectEntities(sender,args[0]).isEmpty()) {
-            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
-            return;
+        for (String arg : args) {
+            if (Bukkit.selectEntities(sender,arg).isEmpty()) {
+                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
+                return;
+            }
         }
 
         if (ModeController.getRunningMode().equals(Const.MODE_BE_OUT)) {
@@ -112,17 +125,24 @@ public class CommandController implements CommandExecutor {
             return;
         }
 
-        Player killer = (Player) Bukkit.selectEntities(sender,args[0]).get(0);
-
         // キラープレイヤーのセット
-        ModeController.setKiller(killer);
+        ModeController.initializeKiller();
+        for (String arg : args) {
+            ModeController.setKiller((Player) Bukkit.selectEntities(sender,arg).get(0));
+        }
+
         // 視錐台オブジェクトをセット
         ModeController.createFrustum();
         // モードの設定をして実行
         ModeController.controller(Const.MODE_BE_OUT);
 
+        Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
         Bukkit.broadcastMessage(DecolationConst.RED + "視界外爆破モードを開始しました");
-        Bukkit.broadcastMessage(DecolationConst.RED + killer.getName() + "の視界に入ってください");
+        for (String arg : args) {
+            Bukkit.broadcastMessage(DecolationConst.RED + arg);
+        }
+        Bukkit.broadcastMessage(DecolationConst.RED + "の視界に入ってください");
+        Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
     }
 
     /**
