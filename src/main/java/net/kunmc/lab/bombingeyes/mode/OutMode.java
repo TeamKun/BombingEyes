@@ -5,6 +5,7 @@ import net.kunmc.lab.bombingeyes.BombingEyes;
 import net.kunmc.lab.bombingeyes.Config;
 import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -80,6 +81,10 @@ public class OutMode extends CommonProcess {
     void settingPlayerList() {
         // キラー以外のプレイヤーをリストに格納
         for (Player player : Bukkit.getOnlinePlayers()) {
+            // ゲームモードがクリエイティブorスぺクテイターの場合は追加しない
+            if (player.getGameMode().equals(GameMode.CREATIVE) || player.getGameMode().equals(GameMode.SPECTATOR)) {
+                return;
+            }
             if (!ModeController.killerList.contains(player)) {
                 playerList.add(new OutModePlayer(player));
             }
