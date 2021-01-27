@@ -23,8 +23,12 @@ public class CommandController implements CommandExecutor {
 
         // コンフィグリロード
         if (commandName.equals(Const.COMMAND_BE_RELOAD)) {
-            Config.loadConfig(true);
-            sender.sendMessage("コンフィグファイルをリロードしました");
+            if (!ModeController.getRunningMode().equals(Const.MODE_NEUTRAL)) {
+                sender.sendMessage(DecolationConst.RED + "コンフィグファイルをリロードするには実行中のbe-offコマンドで実行中のモードを終了してください");
+            } else {
+                Config.loadConfig(true);
+                sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
+            }
             return true;
         }
 
@@ -37,16 +41,16 @@ public class CommandController implements CommandExecutor {
         switch (commandName) {
             // 視界内爆破モードON
             case Const.COMMAND_BE_IN:
-                startBeIn(sender,args);
+                startBeIn(sender, args);
                 break;
 
             // 視界外爆破モードON
             case Const.COMMAND_BE_OUT:
-                startBeOut(sender,args);
+                startBeOut(sender, args);
                 break;
 
             // 爆破モードOFF
-            case  Const.COMMAND_BE_OFF:
+            case Const.COMMAND_BE_OFF:
                 beOff();
                 break;
         }
@@ -55,10 +59,11 @@ public class CommandController implements CommandExecutor {
 
     /**
      * BE_INコマンド実行処理
+     *
      * @param sender
      * @param args
      */
-    private static void startBeIn(CommandSender sender,String[] args) {
+    private static void startBeIn(CommandSender sender, String[] args) {
 
         // 引数の数をチェック
         if (args.length < 1) {
@@ -69,7 +74,7 @@ public class CommandController implements CommandExecutor {
 
         // 指定されたプレイヤーの存在チェック
         for (String arg : args) {
-            if (Bukkit.selectEntities(sender,arg).isEmpty()) {
+            if (Bukkit.selectEntities(sender, arg).isEmpty()) {
                 sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
                 return;
             }
@@ -83,7 +88,7 @@ public class CommandController implements CommandExecutor {
         // キラープレイヤーのセット
         ModeController.initializeKiller();
         for (String arg : args) {
-            ModeController.setKiller((Player) Bukkit.selectEntities(sender,arg).get(0));
+            ModeController.setKiller((Player) Bukkit.selectEntities(sender, arg).get(0));
         }
 
         // 視錐台オブジェクトをセット
@@ -102,10 +107,11 @@ public class CommandController implements CommandExecutor {
 
     /**
      * BE_OUTコマンド実行処理
+     *
      * @param sender
      * @param args
      */
-    private static void startBeOut(CommandSender sender,String[] args) {
+    private static void startBeOut(CommandSender sender, String[] args) {
         // 引数の数をチェック
         if (args.length < 1) {
             sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_LACK_ARGS);
@@ -114,7 +120,7 @@ public class CommandController implements CommandExecutor {
 
         // 指定されたプレイヤーの存在チェック
         for (String arg : args) {
-            if (Bukkit.selectEntities(sender,arg).isEmpty()) {
+            if (Bukkit.selectEntities(sender, arg).isEmpty()) {
                 sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
                 return;
             }
@@ -128,7 +134,7 @@ public class CommandController implements CommandExecutor {
         // キラープレイヤーのセット
         ModeController.initializeKiller();
         for (String arg : args) {
-            ModeController.setKiller((Player) Bukkit.selectEntities(sender,arg).get(0));
+            ModeController.setKiller((Player) Bukkit.selectEntities(sender, arg).get(0));
         }
 
         // 視錐台オブジェクトをセット
