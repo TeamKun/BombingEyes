@@ -55,43 +55,17 @@ abstract public class CommonProcess implements Listener {
     }
 
     /**
-     * キラーの視界内に存在するプレイヤーのリストを取得する
-     * @return true: 視界内　false: 視界外
+     * キラーの視界内にプレイヤーが存在するか判定する
+     * @return true:視界内　false:視界外
      */
     protected boolean isInSight(Player killer,Player target) {
 
-        /** キラープレイヤーの座標 */
-        Vector killerLocation = killer.getLocation().toVector();
-        /** キラープレイヤーのピッチ */
-        double killerPitch = killer.getLocation().getPitch();
-        /** キラープレイヤーのヨー */
-        double killerYaw = killer.getLocation().getYaw();
-        /** ワールドオブジェクト */
-        World world = killer.getWorld();
-        /** ターゲットの座標 */
-        Vector targetVector = target.getLocation().toVector();
+        /** プレイヤーの視界 */
+        Frustum killerFrustum = ModeController.frustum.clone().getFieldOfView(killer.getLocation());
 
-        Vector direction = targetVector.clone().subtract(killer.getLocation().toVector());
-
-        if (direction.getX()==0 && direction.getY() == 0 && direction.getZ() == 0) {
-            direction.setX(1);
-            direction.setY(1);
-            direction.setZ(1);
-        }
-
-        // 遮蔽物の有無を判定
-        if (world.rayTraceBlocks(killerLocation.toLocation(world),direction.normalize(),killerLocation.distance(targetVector))!=null) {
+        if (killerFrustum.isInSight(killer,target)) {
             return false;
         }
-
-        // 視錐台内外判定
-        Frustum frustum = ModeController.frustum.rotatePitch(killerPitch).rotateYaw(killerYaw).translate(killerLocation);
-        if (!frustum.isInSight(target.getLocation().toVector())) {
-            return false;
-        }
-        // 視錐台オブジェクトを初期化
-        ModeController.createFrustum();
-
         return true;
     }
 }
