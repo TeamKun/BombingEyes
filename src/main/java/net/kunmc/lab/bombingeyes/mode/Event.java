@@ -1,10 +1,7 @@
 package net.kunmc.lab.bombingeyes.mode;
 
-import com.destroystokyo.paper.event.player.PlayerConnectionCloseEvent;
-import com.destroystokyo.paper.event.player.PlayerInitialSpawnEvent;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.kunmc.lab.bombingeyes.Const;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +11,7 @@ public class Event implements Listener {
 
     /**
      * ログイン時に爆破モード実行中の場合プレイヤーを爆破対象リストに追加する(途中参加が可能になる)
+     *
      * @param event
      */
     @EventHandler(ignoreCancelled = true)
@@ -26,7 +24,6 @@ public class Event implements Listener {
                 // リストにプレイヤーを追加する
                 InMode.getInstance().addPlayer(player);
                 break;
-
             // 視界外爆破モード実行時
             case Const.MODE_BE_OUT:
                 // リストにプレイヤーを追加する
@@ -41,6 +38,7 @@ public class Event implements Listener {
 
     /**
      * プレイヤーがリスポーンしたとき
+     *
      * @param event
      */
     @EventHandler(ignoreCancelled = true)
@@ -53,7 +51,6 @@ public class Event implements Listener {
                 // リストにプレイヤーを追加する
                 InMode.getInstance().addPlayer(player);
                 break;
-
             // 視界外爆破モード実行時
             case Const.MODE_BE_OUT:
                 // リストにプレイヤーを追加する

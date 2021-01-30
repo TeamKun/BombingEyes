@@ -1,13 +1,9 @@
 package net.kunmc.lab.bombingeyes.mode;
 
 import net.kunmc.lab.bombingeyes.Config;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 
 abstract public class CommonProcess implements Listener {
     /**
