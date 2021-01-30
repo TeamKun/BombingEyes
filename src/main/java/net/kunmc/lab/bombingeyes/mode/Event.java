@@ -2,9 +2,12 @@ package net.kunmc.lab.bombingeyes.mode;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import net.kunmc.lab.bombingeyes.Const;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class Event implements Listener {
@@ -60,6 +63,28 @@ public class Event implements Listener {
             case Const.MODE_NEUTRAL:
                 // 何もしない
                 break;
+        }
+    }
+
+    /**
+     * ゲームモードがスペクテイターが解除された際に再び爆破対象に含む
+     * @param event
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
+        if (!ModeController.getRunningMode().equals(Const.MODE_BE_IN)) {
+            return;
+        }
+
+        GameMode beforeGameMode = event.getPlayer().getGameMode();
+        GameMode afterGameMode = event.getNewGameMode();
+
+        if (!beforeGameMode.equals(GameMode.SPECTATOR)) {
+            return;
+        }
+
+        if (afterGameMode.equals(GameMode.SURVIVAL)||afterGameMode.equals(GameMode.ADVENTURE)) {
+            InMode.getInstance().playerList.add(event.getPlayer());
         }
     }
 }
