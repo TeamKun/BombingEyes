@@ -51,7 +51,6 @@ abstract public class CommonProcess implements Listener {
 
         // ダメージを与える
         player.damage(1000);
-        Bukkit.broadcastMessage(player.getName() + "は爆殺された" );
     }
 
     /**
@@ -64,8 +63,8 @@ abstract public class CommonProcess implements Listener {
         Frustum killerFrustum = ModeController.frustum.clone().getFieldOfView(killer.getLocation());
 
         if (killerFrustum.isInSight(killer,target)) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 }
