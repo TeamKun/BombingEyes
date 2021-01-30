@@ -26,8 +26,7 @@ public class ModeController {
     public static void controller(String runningMode) {
         // モードを設定
         ModeController.runningMode = runningMode;
-
-
+        
         switch (runningMode) {
             case Const.MODE_BE_IN:
                 InMode inMode = InMode.getInstance();
