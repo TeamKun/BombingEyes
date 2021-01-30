@@ -8,17 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModeController {
-    /**　実行中のモード */
+    /**
+     * 　実行中のモード
+     */
     static String runningMode = Const.MODE_NEUTRAL;
 
-    /** キラープレイヤー */
+    /**
+     * キラープレイヤー
+     */
     static List<Player> killerList = new ArrayList<Player>();
 
-    /** 視錐台オブジェクト */
+    /**
+     * 視錐台オブジェクト
+     */
     static Frustum frustum;
 
     public static void controller(String runningMode) {
-
         // モードを設定
         ModeController.runningMode = runningMode;
 
@@ -44,6 +49,7 @@ public class ModeController {
 
     /**
      * キラープレイヤーを設定する
+     *
      * @param killer
      */
     public static void setKiller(Player killer) {
