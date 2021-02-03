@@ -88,7 +88,7 @@ public class Frustum {
         }
 
         /** ターゲットの座標 */
-        Vector targetPoint = target.getLocation().toVector();
+        Vector targetPoint = target.getEyeLocation().toVector();
 
         // 視錐体台内外判定
         // 右面の判定
@@ -239,9 +239,9 @@ public class Frustum {
         /** ワールドオブジェクト */
         World world = player.getWorld();
         /** プレイヤーの座標 */
-        Vector playerPoint = player.getLocation().toVector();
+        Vector playerPoint = player.getEyeLocation().toVector();
         /** ターゲットの座標 */
-        Vector targetPoint = target.getLocation().toVector();
+        Vector targetPoint = target.getEyeLocation().toVector();
         /** プレイヤーとターゲット間の方向ベクトル */
         Vector direction = targetPoint.clone().subtract(playerPoint);
         /** プレイヤーとターゲット間の距離 */
@@ -255,7 +255,7 @@ public class Frustum {
         }
 
         // 遮蔽物の有無を判定
-        if (world.rayTraceBlocks(player.getLocation(), direction.normalize(), distance) != null) {
+        if (world.rayTraceBlocks(player.getEyeLocation(), direction.normalize(), distance) != null) {
             return true;
         }
         return false;

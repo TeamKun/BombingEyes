@@ -4,8 +4,8 @@ import net.kunmc.lab.bombingeyes.Config;
 import org.bukkit.entity.Player;
 
 public class OutModePlayer {
-    private static Player player;
-    private static int time;
+    private Player player;
+    private int time;
 
     OutModePlayer(Player player) {
         this.player = player;
@@ -17,7 +17,7 @@ public class OutModePlayer {
     }
 
     public void incrementTime() {
-        OutModePlayer.time += Config.tick;
+        this.time += Config.tick;
     }
 
     public int getTime() {

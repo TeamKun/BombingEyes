@@ -30,7 +30,7 @@ public class CommonUtil {
      */
     public static void playSoundAll(Sound sound) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playSound(player.getLocation(),
+            player.playSound(player.getEyeLocation(),
                     sound,
                     1,
                     1);

@@ -40,7 +40,7 @@ abstract public class CommonProcess implements Listener {
         }
 
         // 爆発を起こす
-        player.getLocation()
+        player.getEyeLocation()
                 .createExplosion(Config.power,
                         Config.isSetFire
                         ,Config.isBreakBlock);
@@ -56,7 +56,7 @@ abstract public class CommonProcess implements Listener {
     protected boolean isInSight(Player killer,Player target) {
 
         /** プレイヤーの視界 */
-        Frustum killerFrustum = ModeController.frustum.clone().getFieldOfView(killer.getLocation());
+        Frustum killerFrustum = ModeController.frustum.clone().getFieldOfView(killer.getEyeLocation());
 
         if (killerFrustum.isInSight(killer,target)) {
             return true;
