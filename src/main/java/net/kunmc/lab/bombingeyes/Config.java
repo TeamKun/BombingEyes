@@ -9,6 +9,8 @@ public class Config {
 
     /** 視界外爆破モードのタイムリミット */
     public static int timeLimit;
+    /** 視界内爆破モードのタイムリミット */
+    public static int timeLimitIn;
 
     /** FOV */
     public static int fov;
@@ -56,5 +58,6 @@ public class Config {
         isSetFire = config.getBoolean("isSetFire");
         isBreakBlock = config.getBoolean("isBreakBlock");
         timeLimit = config.getInt("timeLimit");
+        timeLimitIn = config.getInt("timeLimitIn");
     }
 }

@@ -22,12 +22,20 @@ public class Const {
      * モード *
      *********/
 
-    /** ニュートラル */
-    public final static String MODE_NEUTRAL = "00";
+    public static enum GameLogicMode {
+        /**
+         * ニュートラル
+         */
+        MODE_NEUTRAL,
 
-    /** 視界内爆破モード */
-    public final static String MODE_BE_IN = "01";
+        /**
+         * 視界内爆破モード
+         */
+        MODE_BE_IN,
 
-    /** 視界外爆破モード */
-    public final static String MODE_BE_OUT = "02";
+        /**
+         * 視界外爆破モード
+         */
+        MODE_BE_OUT,
+    }
 }

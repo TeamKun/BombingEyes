@@ -4,65 +4,44 @@ import net.kunmc.lab.bombingeyes.Config;
 import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ModeController {
     /**
      * 　実行中のモード
      */
-    static String runningMode = Const.MODE_NEUTRAL;
+    public static Const.GameLogicMode runningMode = Const.GameLogicMode.MODE_NEUTRAL;
 
     /**
      * キラープレイヤー
      */
-    static List<Player> killerList = new ArrayList<Player>();
+    public static List<Player> killerList = new ArrayList<Player>();
 
     /**
      * 視錐台オブジェクト
      */
-    static Frustum frustum;
+    public static Frustum frustum;
 
-    public static void controller(String runningMode) {
+    /**
+     * プレイヤーステート
+     */
+    public static final Map<UUID, PlayerState> playerList = new HashMap<>();
+
+    public static void controller(Const.GameLogicMode runningMode) {
         // モードを設定
         ModeController.runningMode = runningMode;
-        
+
         switch (runningMode) {
-            case Const.MODE_BE_IN:
-                InMode inMode = InMode.getInstance();
-                inMode.settingPlayerList();
-                inMode.process();
+            case MODE_BE_IN:
+            case MODE_BE_OUT:
+                // 視錐台オブジェクトをセット
+                ModeController.createFrustum();
                 break;
-            case Const.MODE_BE_OUT:
-                OutMode outMode = OutMode.getInstance();
-                outMode.settingPlayerList();
-                outMode.process();
-                break;
-            case Const.MODE_NEUTRAL:
-                // キラープレイヤーの設定を消去
-                killerList.clear();
+            case MODE_NEUTRAL:
                 frustum = null;
                 break;
         }
     }
-
-    /**
-     * キラープレイヤーを設定する
-     *
-     * @param killer
-     */
-    public static void setKiller(Player killer) {
-        killerList.add(killer);
-    }
-
-    public static void initializeKiller() {
-        killerList.clear();
-    }
-
-    public static String getRunningMode() {
-        return runningMode;
-    }
-
 
     /**
      * 視錐台オブジェクトを生成する

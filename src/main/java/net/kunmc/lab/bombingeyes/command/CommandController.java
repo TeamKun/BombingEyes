@@ -11,6 +11,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class CommandController implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -20,7 +23,7 @@ public class CommandController implements CommandExecutor {
 
         // コンフィグリロード
         if (commandName.equals(Const.COMMAND_BE_RELOAD)) {
-            if (!ModeController.getRunningMode().equals(Const.MODE_NEUTRAL)) {
+            if (!ModeController.runningMode.equals(Const.GameLogicMode.MODE_NEUTRAL)) {
                 sender.sendMessage(DecolationConst.RED + "コンフィグファイルをリロードするには実行中のbe-offコマンドで実行中のモードを終了してください");
             } else {
                 Config.loadConfig(true);
@@ -77,21 +80,20 @@ public class CommandController implements CommandExecutor {
             }
         }
 
-        if (ModeController.getRunningMode().equals(Const.MODE_BE_IN)) {
+        if (ModeController.runningMode.equals(Const.GameLogicMode.MODE_BE_IN)) {
             sender.sendMessage("すでに実行中です");
             return;
         }
 
         // キラープレイヤーのセット
-        ModeController.initializeKiller();
-        for (String arg : args) {
-            ModeController.setKiller((Player) Bukkit.selectEntities(sender, arg).get(0));
-        }
+        ModeController.killerList = Arrays.stream(args)
+                .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
+                .collect(Collectors.toList());
 
-        // 視錐台オブジェクトをセット
-        ModeController.createFrustum();
         // モードの設定をして実行
-        ModeController.controller(Const.MODE_BE_IN);
+        ModeController.controller(Const.GameLogicMode.MODE_BE_IN);
 
         Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
         Bukkit.broadcastMessage(DecolationConst.RED + "視界内爆破モードを開始しました");
@@ -123,21 +125,20 @@ public class CommandController implements CommandExecutor {
             }
         }
 
-        if (ModeController.getRunningMode().equals(Const.MODE_BE_OUT)) {
+        if (ModeController.runningMode.equals(Const.GameLogicMode.MODE_BE_OUT)) {
             sender.sendMessage("すでに実行中です");
             return;
         }
 
         // キラープレイヤーのセット
-        ModeController.initializeKiller();
-        for (String arg : args) {
-            ModeController.setKiller((Player) Bukkit.selectEntities(sender, arg).get(0));
-        }
+        ModeController.killerList = Arrays.stream(args)
+                .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
+                .filter(Player.class::isInstance)
+                .map(Player.class::cast)
+                .collect(Collectors.toList());
 
-        // 視錐台オブジェクトをセット
-        ModeController.createFrustum();
         // モードの設定をして実行
-        ModeController.controller(Const.MODE_BE_OUT);
+        ModeController.controller(Const.GameLogicMode.MODE_BE_OUT);
 
         Bukkit.broadcastMessage(DecolationConst.RED + "==============================");
         Bukkit.broadcastMessage(DecolationConst.RED + "視界外爆破モードを開始しました");
@@ -153,7 +154,7 @@ public class CommandController implements CommandExecutor {
      */
     private static void beOff() {
         // モードの設定をして実行
-        ModeController.controller(Const.MODE_NEUTRAL);
+        ModeController.controller(Const.GameLogicMode.MODE_NEUTRAL);
         Bukkit.broadcastMessage(DecolationConst.YELLOW + "実行中のモードが終了しました");
     }
 }

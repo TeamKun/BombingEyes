@@ -1,6 +1,7 @@
 package net.kunmc.lab.bombingeyes.mode;
 
 import net.kunmc.lab.bombingeyes.Config;
+import net.kunmc.lab.bombingeyes.Const;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -9,27 +10,33 @@ abstract public class CommonProcess implements Listener {
     /**
      * メイン処理
      */
-    abstract void process();
+    public abstract void registerTicks();
 
     /**
-     * リストにプレイヤーをセット
+     * チェック処理
      */
-    abstract void settingPlayerList();
+    public static boolean checkValid(Player player) {
+        if (player.getGameMode().equals(GameMode.CREATIVE) || player.getGameMode().equals(GameMode.SPECTATOR))
+            return false;
+        if (ModeController.killerList.contains(player))
+            return false;
+        return player.isValid();
+    }
 
     /**
-     * リストにプレイヤーを追加する
-     * @param player
+     * ゲームモードに応じたkill判定
      */
-    abstract void addPlayer(Player player);
-
-    /**
-     * リストからプレイヤーを削除する
-     * @param player
-     */
-    abstract void removePlayer(Player player);
+    protected boolean shouldBeKilled(Player killer, Player target) {
+        if (ModeController.runningMode == Const.GameLogicMode.MODE_BE_OUT)
+            return isInSight(killer, target);
+        if (ModeController.runningMode == Const.GameLogicMode.MODE_BE_IN)
+            return !isInSight(killer, target);
+        return false;
+    }
 
     /**
      * 爆破処理
+     *
      * @param player
      */
     protected void bombing(Player player) {
@@ -43,7 +50,7 @@ abstract public class CommonProcess implements Listener {
         player.getEyeLocation()
                 .createExplosion(Config.power,
                         Config.isSetFire
-                        ,Config.isBreakBlock);
+                        , Config.isBreakBlock);
 
         // ダメージを与える
         player.damage(1000);
@@ -51,16 +58,13 @@ abstract public class CommonProcess implements Listener {
 
     /**
      * キラーの視界内にプレイヤーが存在するか判定する
+     *
      * @return true:視界内　false:視界外
      */
-    protected boolean isInSight(Player killer,Player target) {
-
+    protected boolean isInSight(Player killer, Player target) {
         /** プレイヤーの視界 */
         Frustum killerFrustum = ModeController.frustum.clone().getFieldOfView(killer.getEyeLocation());
 
-        if (killerFrustum.isInSight(killer,target)) {
-            return true;
-        }
-        return false;
+        return killerFrustum.isInSight(killer, target);
     }
 }
